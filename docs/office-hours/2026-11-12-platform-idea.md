@@ -105,6 +105,37 @@
 
 更正：第 4 节曾写"相机参数、录制 / 直播类指令"，其中录制没有依据，实际有依据的是直播相关指令和电量读取。
 
+## 4e. Osmo Pocket 4 能否作为验证载体（更正第 4 节）
+
+依据：扩大范围的网络检索和各项目主页（2026-11-12），未读代码，未做真机测试。
+
+第 4 节曾写 Pocket 4 没有公开控制方案。更正：官方 SDK 确实没有，但社区已有逆向成果。
+
+| 项目 | 对 Pocket 4 的说法 | 形态 |
+|---|---|---|
+| Osmosis（KonradIT） | Pocket 3、Pocket 4 / 4 Pro 均列为"已在真机验证"；`MEDIA_PROTOCOL.md` 记录了通过蓝牙开始和停止 RTMP 直播的指令 | 安卓应用，MIT |
+| dji-remote（dimadesu） | 标为支持，但作者注明更新后未确认可用 | 安卓应用 |
+| node-osmo（datagutt） | 只列 Action 3/4/5 和 Pocket 3 | TypeScript 库 |
+| osmo-live（KevinCowleys） | 列了 Pocket 3，未列 Pocket 4；只在 Action 4 上测试过 | Go 命令行工具 |
+
+结论：Pocket 4 可以试，但不能假定可用。我们计划调用的 node-osmo 没有声明支持它。处理方式是把 Pocket 4 作为同一个适配器下的未核实机型，真机测试时两台都测；node-osmo 连不上时，再评估按 Osmosis 协议文档补差异的工作量。能力范围与 Pocket 3 相同，限于直播相关指令，没有录像控制、云台转动或状态读回的记录。
+
+另一处更正：第 4 节把直播能力只归于 djictl。实际上 node-osmo 的 README 也列有"向指定 RTMP 服务器开始直播"，本设计只使用 node-osmo。
+
+## 4f. 开发工具分工
+
+- gstack 负责流程两端：`/office-hours`（本次）、`/autoplan` 评审、`/review`、`/ship`。
+- pstack 负责中间的编码过程：`/pstack:poteto-mode` 为主工作模式，配合 `/pstack:architect`、`/pstack:tdd`、`/pstack:statechart`（校验规则本质是状态机）、`/pstack:typescript-best-practices`。
+- 开发前需先运行一次 `/pstack:setup-pstack`，把 pstack 的模型角色映射到 Claude Code 中可用的模型。
+
+## 4g. 设计文档审阅进展
+
+| 轮次 | 评分 | 必修问题 | 处理 |
+|---|---|---|---|
+| 第 1 轮 | 6/10 | 11 个 | 全部修改，第 2 轮确认已解决 |
+| 第 2 轮 | 7/10 | 4 个（状态无法从"未知"恢复、第一版无法停止直播、确认提示的时机、用户原话中的密码未屏蔽） | 已修改，待第 3 轮确认 |
+| 第 3 轮 | 进行中 | | |
+
 ## 5. 未决问题
 
 - [ ] 手上是否还有 SDK 支持的无人机或其他机器人（型号、遥控器型号）。
@@ -121,6 +152,11 @@
 - 发起人作业：写下第一个内部用户的名字；在本地电脑上跑一次 Pocket 3 真机测试并记录结果。
 
 ## 参考来源
+
+- Osmosis：https://github.com/KonradIT/Osmosis
+- dji-remote：https://github.com/dimadesu/dji-remote
+- osmo-live：https://github.com/KevinCowleys/osmo-live
+- node-osmo 仓库：https://github.com/datagutt/node-osmo
 
 - DJI Mobile SDK for Android 4 支持产品列表：https://sdk-forum.dji.net/hc/en-us/articles/25516653720601
 - DJI Mobile SDK V4 下载页：https://developer.dji.com/mobile-sdk-v4/downloads/
