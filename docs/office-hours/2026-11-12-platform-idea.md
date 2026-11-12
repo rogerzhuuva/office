@@ -56,6 +56,23 @@
 
 当前判断：真正需要验证的是"一句话能否稳定、安全地变成正确的设备指令"这一段，它不依赖真机起飞。Pocket 3 可以做一个演示，但不应作为平台的起点。发起人倾向先用 Pocket 验证，最终由发起人决定。
 
+## 4a. 行业现状检索
+
+证据类型：网络检索（2026-11-12），每个主题一次检索，只读了摘要，未逐一核实仓库代码。
+
+| 方向 | 已有成果 | 对本项目的含义 |
+|---|---|---|
+| 自然语言控制无人机 | PX4 + ROS2 + 本地模型的开源智能体（arXiv 2506.07509，代码 limshoonkit/ros2-agent-ws）：指令格式全部合法，但任务成功率最高只有 40%。另有面向 ArduPilot 的 FLUC、基于 AirSim 的研究系统 | 已是公开的研究方向，概念本身不新。难点在可靠性，不在"能不能做" |
+| 大模型 + ROS2 | ROSA（NASA JPL）、RAI（RobotecAI）两个智能体框架；ROS-MCP 服务器把话题、服务、动作暴露给大模型 | ROS2 侧的"接入大模型"已有现成轮子，不应重做 |
+| 大疆 + ROS2 | psdk_ros2（umdlife）：把大疆 Payload SDK 包装成 ROS2 接口，支持位置 / 速度控制、云台与相机管理、视频流；Aerostack2 基于它支持 M30、M300 RTK、M350 RTK | 大疆行业机型接入 ROS2 已有开源方案，但只限支持 Payload SDK 的行业机，不含 Pocket 和消费级机型 |
+| 常见错误 | 把大模型当作安全层；给智能体暴露过多工具；缺少错误回馈；小模型与大模型表现差异大；把研发框架当成可量产产品 | 2026 年 ROSClaw 论文：相同约束下不同模型的越界动作提议率相差可达 4.8 倍，执行层设计比提示词更影响安全 |
+
+三层归纳：
+
+- **公认的做法**：大模型负责理解和规划，通过一组受限的工具调用设备；ROS2 是机器人侧事实标准。
+- **当前的讨论**：瓶颈是可靠性和安全。开源框架都自称研发用途，不是量产级。
+- **对本项目的判断**：常规做法是对的，应当建立在它之上。"统一接入"这一层已经是现成的开源件，不构成差异。可能的差异点在两处：一是大模型与设备之间可验证的指令校验与执行层；二是现有方案没有覆盖的大疆设备。专利若要有，更可能出在第一处。
+
 ## 5. 未决问题
 
 - [ ] 手上是否还有 SDK 支持的无人机或其他机器人（型号、遥控器型号）。
@@ -65,7 +82,7 @@
 
 ## 6. 下一步
 
-- 行业现状检索（待发起人同意）。
+- ~~行业现状检索~~（已完成，见 4a）。
 - 前提确认（Premise Challenge）。
 - 备选方案对比与选择。
 - 输出正式设计文档。
@@ -78,4 +95,12 @@
 - Pocket 4 / 4P 固件汇总（Newsshooter）：https://www.newsshooter.com/2026/10/05/dji-osmo-pocket-4-and-4p-firmware-roundup/
 - node-osmo：https://github.imc.re/datagutt/node-osmo
 - djictl（xaionaro/reverse-engineering-dji）：https://backiee.wasmer.app/http_github_com/xaionaro/reverse-engineering-dji
+- PX4 自然语言控制智能体（arXiv 2506.07509）：https://arxiv.org/abs/2506.07509v1
+- ROSA（arXiv 2410.06472）：https://arxiv.org/pdf/2410.06472
+- RAI，ROSCon 2024 演讲：https://roscon.ros.org/2024/talks/Agent-based_AI_Framework_for_ROS_2.pdf
+- ROSClaw（arXiv 2603.26997）：https://arxiv.org/html/2603.26997v1
+- Open Robotics 论坛：机器人智能体的经验与实践：https://discourse.openrobotics.org/t/building-and-integrating-ai-agents-for-robotics-experiences-tools-and-best-practices/52465
+- psdk_ros2：https://github.com/umdlife/psdk_ros2
+- psdk_ros2 发布说明：https://discourse.openrobotics.org/t/introducing-psdk-ros2-bridging-djis-psdk-libraries-with-ros-2/33500
+- Aerostack2 的大疆 PSDK 平台包：https://index.ros.org/p/as2_platform_dji_psdk/
 - 逆向 DJI Osmo 云台蓝牙协议的记录：https://aaadityaart.notion.site/Reverse-Engineering-the-DJI-Osmo-37b18cae2ab08098acefd85694a070bd
